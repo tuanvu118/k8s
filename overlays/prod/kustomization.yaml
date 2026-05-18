@@ -8,7 +8,7 @@ images:
     newTag: e4a898bf7e23
   - name: auth-gateway-image
     newName: ttcsacr20260519.azurecr.io/ttcs/auth-gateway
-    newTag: latest
+    newTag: a3e41781ec56
   - name: be-service-image
     newName: ttcsacr20260519.azurecr.io/ttcs/be-service
     newTag: latest
