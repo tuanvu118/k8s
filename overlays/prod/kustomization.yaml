@@ -11,7 +11,7 @@ images:
     newTag: a3e41781ec56
   - name: be-service-image
     newName: ttcsacr20260519.azurecr.io/ttcs/be-service
-    newTag: latest
+    newTag: 75d320dc1cdf
   - name: qr-service-image
     newName: ttcsacr20260519.azurecr.io/ttcs/qr-service
     newTag: latest
