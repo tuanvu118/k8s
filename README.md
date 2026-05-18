@@ -112,11 +112,28 @@ Cap nhat file [overlays/prod/kustomization.yaml](/d:/TTCS/k8s/overlays/prod/kust
 - doi `newName` sang login server cua ACR moi
 - doi `newTag` sang tag image ban muon deploy
 
+Hoac dung script:
+
+```powershell
+.\k8s\scripts\Set-DeployConfig.ps1 `
+  -AcrName <acr-name-moi> `
+  -AcrLoginServer <acr-login-server> `
+  -DeployRepo <owner/deploy-repo>
+```
+
 ## Buoc 4: Apply lan dau
 
 ```powershell
 kubectl apply -k .\k8s\overlays\prod
 kubectl -n ttcs get pods
+```
+
+Hoac dung script:
+
+```powershell
+.\k8s\scripts\Bootstrap-AksDeploy.ps1 `
+  -AksResourceGroup rg-ttcs-aks `
+  -AksName ttcs-aks
 ```
 
 ## Buoc 5: Cai Argo CD

@@ -11,6 +11,8 @@ env:
   KUSTOMIZE_IMAGE_NAME: REPLACE_ME_KUSTOMIZE_IMAGE_NAME
   DEPLOY_REPO: REPLACE_ME_OWNER/REPLACE_ME_DEPLOY_REPO
   DEPLOY_FILE: overlays/prod/kustomization.yaml
+  DOCKER_CONTEXT: .
+  DOCKERFILE_PATH: ./Dockerfile
 
 jobs:
   build-and-push:
@@ -42,7 +44,8 @@ jobs:
       - name: Build and push image
         uses: docker/build-push-action@v6
         with:
-          context: .
+          context: ${{ env.DOCKER_CONTEXT }}
+          file: ${{ env.DOCKERFILE_PATH }}
           push: true
           tags: ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_REPOSITORY }}:${{ steps.meta.outputs.image_tag }}
 
@@ -67,9 +70,8 @@ jobs:
         working-directory: deploy-repo
         shell: bash
         run: |
-          yq -i '
-            (.images[] | select(.name == "'"${KUSTOMIZE_IMAGE_NAME}"'") | .newTag) = "'"${{ needs.build-and-push.outputs.image_tag }}"'"
-          ' "${DEPLOY_FILE}"
+          export IMAGE_TAG="${{ needs.build-and-push.outputs.image_tag }}"
+          yq -i '(.images[] | select(.name == strenv(KUSTOMIZE_IMAGE_NAME)) | .newTag) = strenv(IMAGE_TAG)' "${DEPLOY_FILE}"
 
       - name: Commit and push
         working-directory: deploy-repo
