@@ -26,8 +26,10 @@ File [build-and-update-deploy-repo.yaml](/d:/TTCS/k8s/templates/github-actions/b
 
 ## Secret can co trong source repo
 
-- `AZURE_CREDENTIALS`
-  service principal JSON de login Azure trong GitHub Actions
+- `ACR_USERNAME`
+  username cua ACR de GitHub Actions login registry
+- `ACR_PASSWORD`
+  password cua ACR de GitHub Actions login registry
 - `DEPLOY_REPO_PAT`
   PAT co quyen push vao deploy repo
 
