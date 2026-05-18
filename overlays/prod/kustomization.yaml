@@ -4,14 +4,16 @@ resources:
   - ../../base
 images:
   - name: frontend-image
-    newName: REPLACE_ME_ACR_LOGIN_SERVER/ttcs/frontend
+    newName: ttcsacr20260519.azurecr.io/ttcs/frontend
     newTag: latest
   - name: auth-gateway-image
-    newName: REPLACE_ME_ACR_LOGIN_SERVER/ttcs/auth-gateway
+    newName: ttcsacr20260519.azurecr.io/ttcs/auth-gateway
     newTag: latest
   - name: be-service-image
-    newName: REPLACE_ME_ACR_LOGIN_SERVER/ttcs/be-service
+    newName: ttcsacr20260519.azurecr.io/ttcs/be-service
     newTag: latest
   - name: qr-service-image
-    newName: REPLACE_ME_ACR_LOGIN_SERVER/ttcs/qr-service
+    newName: ttcsacr20260519.azurecr.io/ttcs/qr-service
     newTag: latest
+
+

@@ -4,7 +4,7 @@ metadata:
   name: be-service-api
   namespace: ttcs
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: be-service-api
@@ -87,11 +87,11 @@ spec:
             periodSeconds: 20
           resources:
             requests:
-              cpu: 250m
-              memory: 256Mi
+              cpu: 100m
+              memory: 128Mi
             limits:
-              cpu: 750m
-              memory: 512Mi
+              cpu: 300m
+              memory: 256Mi
 ---
 apiVersion: v1
 kind: Service

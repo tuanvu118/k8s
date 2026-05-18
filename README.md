@@ -180,3 +180,4 @@ Workflow mau nam o:
 
 - Ban dang dung mot workspace local gom nhieu repo. Ve mat GitOps, hay coi `k8s/` nay la repo deploy.
 - Ve lau dai, co the tach `mongodb`, `redis`, `rabbitmq` sang managed service; luc do chi can sua ConfigMap/Secret va bo cac resource trong `base/platform/`.
+- Manifest hien tai da duoc giam resource de fit hon voi cluster 2 node `Standard_D2s_v3`.

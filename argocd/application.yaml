@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/REPLACE_ME/REPLACE_ME_DEPLOY_REPO.git
+    repoURL: https://github.com/tuanvu118/k8s.git
     targetRevision: main
     path: overlays/prod
   destination:
@@ -18,3 +18,5 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+
+
