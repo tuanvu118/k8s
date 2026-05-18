@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-gateway
+  namespace: ttcs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-gateway
+  template:
+    metadata:
+      labels:
+        app: auth-gateway
+    spec:
+      containers:
+        - name: auth-gateway
+          image: auth-gateway-image:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: ttcs-app-secrets
+                  key: JWT_SECRET
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-gateway
+  namespace: ttcs
+spec:
+  selector:
+    app: auth-gateway
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080

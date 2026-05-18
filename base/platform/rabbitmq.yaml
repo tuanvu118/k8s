@@ -1,0 +1,107 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: rabbitmq-data
+  namespace: ttcs
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rabbitmq
+  namespace: ttcs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rabbitmq
+  template:
+    metadata:
+      labels:
+        app: rabbitmq
+    spec:
+      containers:
+        - name: rabbitmq
+          image: rabbitmq:3.13-management-alpine
+          ports:
+            - containerPort: 5672
+            - containerPort: 15672
+          env:
+            - name: RABBITMQ_DEFAULT_USER
+              valueFrom:
+                secretKeyRef:
+                  name: ttcs-app-secrets
+                  key: RABBITMQ_USERNAME
+            - name: RABBITMQ_DEFAULT_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: ttcs-app-secrets
+                  key: RABBITMQ_PASSWORD
+            - name: RABBITMQ_DEFAULT_VHOST
+              valueFrom:
+                configMapKeyRef:
+                  name: ttcs-shared-config
+                  key: RABBITMQ_VHOST
+          volumeMounts:
+            - name: rabbitmq-data
+              mountPath: /var/lib/rabbitmq
+          startupProbe:
+            exec:
+              command:
+                - rabbitmq-diagnostics
+                - -q
+                - ping
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 18
+          readinessProbe:
+            exec:
+              command:
+                - rabbitmq-diagnostics
+                - -q
+                - ping
+            initialDelaySeconds: 20
+            periodSeconds: 15
+            timeoutSeconds: 5
+          livenessProbe:
+            exec:
+              command:
+                - rabbitmq-diagnostics
+                - -q
+                - ping
+            initialDelaySeconds: 40
+            periodSeconds: 20
+            timeoutSeconds: 5
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+      volumes:
+        - name: rabbitmq-data
+          persistentVolumeClaim:
+            claimName: rabbitmq-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rabbitmq
+  namespace: ttcs
+spec:
+  selector:
+    app: rabbitmq
+  ports:
+    - name: amqp
+      port: 5672
+      targetPort: 5672
+    - name: management
+      port: 15672
+      targetPort: 15672

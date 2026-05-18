@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: be-service-scheduler
+  namespace: ttcs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: be-service-scheduler
+  template:
+    metadata:
+      labels:
+        app: be-service-scheduler
+    spec:
+      containers:
+        - name: be-service-scheduler
+          image: be-service-image:latest
+          command:
+            - python
+            - -m
+            - scheduler.main
+          envFrom:
+            - configMapRef:
+                name: ttcs-shared-config
+          env:
+            - name: MONGO_DATABASE
+              value: ttcs
+            - name: ENABLE_APP_SCHEDULER
+              value: "false"
+            - name: MONGO_INITDB_ROOT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: ttcs-app-secrets
+                  key: MONGO_INITDB_ROOT_USERNAME
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ttcs-app-secrets
+                  key: MONGO_INITDB_ROOT_PASSWORD
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: ttcs-app-secrets
+                  key: JWT_SECRET
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi

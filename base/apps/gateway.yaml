@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway
+  namespace: ttcs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway
+  template:
+    metadata:
+      labels:
+        app: gateway
+    spec:
+      containers:
+        - name: caddy
+          image: caddy:2-alpine
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: gateway-config
+              mountPath: /etc/caddy/Caddyfile
+              subPath: Caddyfile
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 20
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 100m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 128Mi
+      volumes:
+        - name: gateway-config
+          configMap:
+            name: ttcs-gateway-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway
+  namespace: ttcs
+spec:
+  type: LoadBalancer
+  selector:
+    app: gateway
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80

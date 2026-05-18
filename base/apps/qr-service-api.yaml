@@ -1,0 +1,89 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qr-service-api
+  namespace: ttcs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: qr-service-api
+  template:
+    metadata:
+      labels:
+        app: qr-service-api
+    spec:
+      containers:
+        - name: qr-service-api
+          image: qr-service-image:latest
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: ttcs-shared-config
+          env:
+            - name: MONGO_DATABASE
+              value: qr_attendance_db
+            - name: ENABLE_APP_SCHEDULER
+              value: "false"
+            - name: ENABLE_EMBEDDED_SYNC_WORKER
+              value: "false"
+            - name: ENABLE_EMBEDDED_ATTENDANCE_WORKER
+              value: "false"
+            - name: MONGO_INITDB_ROOT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: ttcs-app-secrets
+                  key: MONGO_INITDB_ROOT_USERNAME
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ttcs-app-secrets
+                  key: MONGO_INITDB_ROOT_PASSWORD
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: ttcs-app-secrets
+                  key: JWT_SECRET
+            - name: RABBITMQ_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: ttcs-app-secrets
+                  key: RABBITMQ_USERNAME
+            - name: RABBITMQ_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ttcs-app-secrets
+                  key: RABBITMQ_PASSWORD
+          readinessProbe:
+            httpGet:
+              path: /qr/health
+              port: 8000
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /qr/health
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+            limits:
+              cpu: 750m
+              memory: 512Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: qr-service-api
+  namespace: ttcs
+spec:
+  selector:
+    app: qr-service-api
+  ports:
+    - name: http
+      port: 8000
+      targetPort: 8000

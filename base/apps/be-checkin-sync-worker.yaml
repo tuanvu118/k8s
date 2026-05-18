@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: be-checkin-sync-worker
+  namespace: ttcs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: be-checkin-sync-worker
+  template:
+    metadata:
+      labels:
+        app: be-checkin-sync-worker
+    spec:
+      containers:
+        - name: be-checkin-sync-worker
+          image: be-service-image:latest
+          command:
+            - python
+            - -m
+            - worker.checkin_sync_worker
+          envFrom:
+            - configMapRef:
+                name: ttcs-shared-config
+          env:
+            - name: MONGO_DATABASE
+              value: ttcs
+            - name: MONGO_INITDB_ROOT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: ttcs-app-secrets
+                  key: MONGO_INITDB_ROOT_USERNAME
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ttcs-app-secrets
+                  key: MONGO_INITDB_ROOT_PASSWORD
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: ttcs-app-secrets
+                  key: JWT_SECRET
+            - name: RABBITMQ_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: ttcs-app-secrets
+                  key: RABBITMQ_USERNAME
+            - name: RABBITMQ_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ttcs-app-secrets
+                  key: RABBITMQ_PASSWORD
+          resources:
+            requests:
+              cpu: 200m
+              memory: 192Mi
+            limits:
+              cpu: 500m
+              memory: 384Mi

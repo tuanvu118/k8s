@@ -1,0 +1,17 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../../base
+images:
+  - name: frontend-image
+    newName: REPLACE_ME_ACR_LOGIN_SERVER/ttcs/frontend
+    newTag: latest
+  - name: auth-gateway-image
+    newName: REPLACE_ME_ACR_LOGIN_SERVER/ttcs/auth-gateway
+    newTag: latest
+  - name: be-service-image
+    newName: REPLACE_ME_ACR_LOGIN_SERVER/ttcs/be-service
+    newTag: latest
+  - name: qr-service-image
+    newName: REPLACE_ME_ACR_LOGIN_SERVER/ttcs/qr-service
+    newTag: latest
