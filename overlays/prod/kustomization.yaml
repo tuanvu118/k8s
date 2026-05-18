@@ -14,4 +14,4 @@ images:
     newTag: 75d320dc1cdf
   - name: qr-service-image
     newName: ttcsacr20260519.azurecr.io/ttcs/qr-service
-    newTag: latest
+    newTag: 878e967f6feb
