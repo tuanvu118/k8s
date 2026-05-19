@@ -53,33 +53,24 @@ spec:
             - name: rabbitmq-data
               mountPath: /var/lib/rabbitmq
           startupProbe:
-            exec:
-              command:
-                - rabbitmq-diagnostics
-                - -q
-                - ping
+            tcpSocket:
+              port: 5672
             initialDelaySeconds: 20
             periodSeconds: 10
-            timeoutSeconds: 15
+            timeoutSeconds: 5
             failureThreshold: 30
           readinessProbe:
-            exec:
-              command:
-                - rabbitmq-diagnostics
-                - -q
-                - ping
+            tcpSocket:
+              port: 5672
             initialDelaySeconds: 30
             periodSeconds: 15
-            timeoutSeconds: 10
+            timeoutSeconds: 5
           livenessProbe:
-            exec:
-              command:
-                - rabbitmq-diagnostics
-                - -q
-                - ping
+            tcpSocket:
+              port: 5672
             initialDelaySeconds: 60
             periodSeconds: 20
-            timeoutSeconds: 10
+            timeoutSeconds: 5
           resources:
             requests:
               cpu: 100m
