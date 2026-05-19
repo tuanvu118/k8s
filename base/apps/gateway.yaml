@@ -18,6 +18,7 @@ spec:
           image: caddy:2-alpine
           ports:
             - containerPort: 80
+            - containerPort: 443
           volumeMounts:
             - name: gateway-config
               mountPath: /etc/caddy/Caddyfile
@@ -59,3 +60,6 @@ spec:
     - name: http
       port: 80
       targetPort: 80
+    - name: https
+      port: 443
+      targetPort: 443

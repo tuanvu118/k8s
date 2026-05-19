@@ -7,7 +7,7 @@ data:
   BACKEND_CONTAINER_PORT: "8000"
   ACCESS_TOKEN_EXPIRE_MINUTES: "30"
   REFRESH_TOKEN_EXPIRE_DAYS: "7"
-  CORS_ALLOW_ORIGINS: "http://localhost,http://api.localhost,http://qr.localhost"
+  CORS_ALLOW_ORIGINS: "http://ptit.cloud,https://ptit.cloud,http://www.ptit.cloud,https://www.ptit.cloud"
   MONGO_HOST: mongodb
   MONGO_PORT: "27017"
   REDIS_HOST: redis
@@ -50,10 +50,6 @@ metadata:
   namespace: ttcs
 data:
   Caddyfile: |
-    {
-      auto_https off
-    }
-
     (common_site) {
       encode zstd gzip
       header {
@@ -92,7 +88,7 @@ data:
       }
     }
 
-    :80 {
+    ptit.cloud, www.ptit.cloud {
       import common_site
 
       handle /api/auth/* {
