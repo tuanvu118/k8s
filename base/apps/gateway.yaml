@@ -5,6 +5,8 @@ metadata:
   namespace: ttcs
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: gateway
@@ -23,15 +25,17 @@ spec:
             - name: gateway-config
               mountPath: /etc/caddy/Caddyfile
               subPath: Caddyfile
+            - name: caddy-data
+              mountPath: /data
+            - name: caddy-config-data
+              mountPath: /config
           readinessProbe:
-            httpGet:
-              path: /
+            tcpSocket:
               port: 80
             initialDelaySeconds: 10
             periodSeconds: 10
           livenessProbe:
-            httpGet:
-              path: /
+            tcpSocket:
               port: 80
             initialDelaySeconds: 20
             periodSeconds: 20
@@ -46,6 +50,12 @@ spec:
         - name: gateway-config
           configMap:
             name: ttcs-gateway-config
+        - name: caddy-data
+          persistentVolumeClaim:
+            claimName: gateway-caddy-data
+        - name: caddy-config-data
+          persistentVolumeClaim:
+            claimName: gateway-caddy-config
 ---
 apiVersion: v1
 kind: Service
@@ -63,3 +73,27 @@ spec:
     - name: https
       port: 443
       targetPort: 443
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: gateway-caddy-data
+  namespace: ttcs
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: gateway-caddy-config
+  namespace: ttcs
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 256Mi
