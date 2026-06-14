@@ -5,7 +5,7 @@ resources:
 images:
   - name: frontend-image
     newName: ttcsacr20260519.azurecr.io/ttcs/frontend
-    newTag: 44e6fb019b87
+    newTag: c35081101a65
   - name: auth-gateway-image
     newName: ttcsacr20260519.azurecr.io/ttcs/auth-gateway
     newTag: 133c26634a09
